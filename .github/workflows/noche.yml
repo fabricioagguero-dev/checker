@@ -15,14 +15,11 @@ jobs:
           TOKEN_TG = '8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4'
           CHAT_ID = '7210756206'
           
-          # Diccionarios optimizados para Comcast (EE.UU.)
-          nombres = ['john', 'mike', 'david', 'chris', 'steve', 'kevin', 'mark', 'jeff', 'paul', 'brian']
-          apellidos = ['smith', 'johnson', 'williams', 'brown', 'jones', 'miller', 'davis', 'wilson']
-          suffixes = ['1', '2', '2023', '2024', '!', '77', '99']
+          nombres = ['john', 'mike', 'david', 'chris', 'steve', 'kevin', 'mark', 'jeff', 'paul', 'brian', 'amy', 'nicole', 'sarah']
+          apellidos = ['smith', 'johnson', 'williams', 'brown', 'jones', 'miller', 'davis', 'wilson', 'moore', 'taylor']
           
           def gen_linea():
               user = random.choice(nombres) + random.choice(apellidos)[:3] + str(random.randint(10, 999))
-              # Generamos 10 contraseñas lógicas mezclando el user con variantes
               passwords = [
                   user + '!', 
                   user + '2024', 
@@ -33,7 +30,36 @@ jobs:
                   user.capitalize(), 
                   user + '01', 
                   'Password123!', 
-                  user[::-1] # User al revés (un clásico)
+                  user[::-1]
+              ]
+              return f'{user}@comcast.net | ' + ' | '.join(passwords)
+
+          # LIMITE DE SEGURIDAD PARA COMCAST (30 MILLONES)
+          MAX_LINEAS = 30000000
+          total = 0
+          last_report = time.time()
+          
+          print('Iniciando generacion de 30M de combos...')
+          with open('combos_comcast.txt', 'w') as f:
+              for _ in range(MAX_LINEAS):
+                  f.write(gen_linea() + '\n')
+                  total += 1
+                  # Reporte cada 1 millon de lineas para no saturar
+                  if total % 1000000 == 0:
+                      if time.time() - last_report > 30:
+                          try:
+                              msg = f'📊 NexoraSaaS Comcast: {total // 1000000}M de 30M'
+                              requests.get(f'https://api.telegram.org/bot{TOKEN_TG}/sendMessage?chat_id={CHAT_ID}&text={msg}')
+                              last_report = time.time()
+                          except:
+                              pass
+          "
+      - name: Comprimir y Enviar
+        run: |
+          echo "Comprimiendo archivo..."
+          zip -9 combos_comcast.zip combos_comcast.txt
+          echo "Enviando a Telegram..."
+          curl -v -F document=@"combos_comcast.zip" "https://api.telegram.org/bot8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4/sendDocument?chat_id=7210756206"
               ]
               return f'{user}@comcast.net | ' + ' | '.join(passwords)
 
