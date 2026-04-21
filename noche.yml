@@ -1,0 +1,37 @@
+python3 -c "
+import random, time
+
+nombres = ['juan', 'jose', 'luis', 'carlos', 'mario', 'jorge', 'ricardo', 'sergio', 'diego', 'ariel', 'fabian', 'marcelo', 'pablo', 'matias', 'nicolas', 'lucas', 'hernan', 'gustavo', 'javier', 'claudio', 'roberto', 'daniel', 'hugo', 'oscar', 'ruben', 'adrian', 'marcos', 'walter', 'raul', 'anibal', 'victor', 'ramon', 'federico', 'gonzalo', 'esteban', 'cristian', 'franco', 'enzo', 'bruno', 'agustin', 'facundo', 'tomas', 'santiago', 'valentin', 'joaquin', 'felipe', 'bautista', 'mateo', 'juanpablo', 'juanmanuel', 'maria', 'ana', 'laura', 'claudia', 'silvia', 'monica', 'marta', 'patricia', 'adriana', 'graciela', 'elizabeth', 'marcela', 'sandra', 'nancy', 'beatriz', 'alicia', 'roxana', 'veronica', 'paola', 'natalia', 'andrea', 'florencia', 'luciana', 'camila', 'sofia', 'martina', 'valentina', 'antonella', 'micaela', 'belen', 'daniela', 'romina', 'sabrina', 'carolina', 'gisela', 'jesica', 'lujan', 'milagros', 'rocio', 'sol', 'luna', 'daiana', 'yamila', 'mariana', 'carina', 'estela', 'norma', 'gladys', 'mirta', 'zulma']
+
+apellidos = ['gonzalez', 'rodriguez', 'lopez', 'garcia', 'martinez', 'perez', 'sanchez', 'romero', 'diaz', 'fernandez', 'sosa', 'alvarez', 'ruiz', 'torres', 'cassani', 'gomez', 'lucero', 'vazquez', 'castro', 'morales', 'pereyra', 'gutierrez', 'duarte', 'silva', 'espindola', 'mendez', 'acosta', 'ortiz', 'medina', 'suarez', 'aguirre', 'blanco', 'gimenez', 'ramirez', 'benitez', 'flores', 'vera', 'quinonez', 'gallardo', 'prieto', 'correa', 'molina', 'vargas', 'ledesma', 'reyes', 'salinas', 'maldonado', 'villalba', 'godoy', 'valdez', 'campos', 'peralta', 'marin', 'medrano', 'avila', 'cabrera', 'rios', 'herrera', 'moreno', 'oviedo', 'palacios', 'paredes', 'paz', 'pena', 'ponce', 'rivas', 'rivero', 'robles', 'rojas', 'rosales', 'salas', 'salazar', 'salvatierra', 'sandoval', 'santacruz', 'santillan', 'santos', 'segivia', 'serrano', 'solis', 'soria', 'taborda', 'tejeda', 'tolosa', 'toledo', 'toro', 'tripodi', 'valenzuela', 'vega', 'velazquez', 'vergara', 'vidal', 'villarreal', 'villegas', 'zamora', 'zapata', 'zarate', 'zuñiga']
+
+apodos = ['crack', 'master', 'capo', 'pibe', 'vips', 'admin', 'user', 'pro', 'ganador', 'suerte', 'boss', 'loco', 'negro', 'chino', 'turco', 'gallego', 'ruso', 'pepe', 'tito', 'coco', 'momo', 'lolo', 'tati', 'pipo', 'facha', 'fiera', 'tigre', 'leon', 'rayo', 'mago', 'rector', 'socio', 'padrino', 'capitan', 'as', 'lider', 'campeon', 'idolo', 'genio', 'maquina', 'bestia', 'fenomeno', 'titano', 'coloso', 'gigante', 'duque', 'conde', 'rey', 'principe', 'lord', 'sir', 'don', 'caballero', 'guerrero', 'soldado', 'halcon', 'aguila', 'lobo', 'zorro', 'pantera', 'puma', 'cobra', 'dragon', 'vikingo', 'espartano', 'gladiador', 'pirata', 'corsario', 'ninja', 'samurai', 'monje', 'santo', 'angel', 'diablo', 'demonio', 'fantasma', 'sombra', 'viento', 'fuego', 'trueno', 'roca', 'acero', 'oro', 'plata', 'diamante', 'rubi', 'zafiro', 'atomo', 'bit', 'byte', 'pixel', 'link', 'cyber', 'tecno', 'nano', 'mega', 'ultra', 'super', 'hiper']
+
+simbolos = ['!', '@', '#', '$', '*', '.', '_', '?', '¿', '¡']
+anios = ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '123', '321', '01', '007', '10', '22', '33', '44', '55', '66', '77', '88', '99']
+
+def generar_humana():
+    # Estructura variable para que el archivo sea diverso
+    tipo = random.randint(1, 4)
+    if tipo == 1: # Nombre + Año
+        res = random.choice(nombres) + random.choice(anios)
+    elif tipo == 2: # Apellido + Numero
+        res = random.choice(apellidos) + str(random.randint(1, 999))
+    elif tipo == 3: # Apodo + Simbolo + Año
+        res = random.choice(apodos) + random.choice(simbolos) + random.choice(anios)
+    else: # Nombre + Apellido (Cortado)
+        res = random.choice(nombres) + random.choice(apellidos)[:4]
+    
+    # Ajuste de longitud (5 a 15)
+    if len(res) < 5: res += str(random.randint(10, 99))
+    if len(res) > 15: res = res[:15]
+    
+    # Capitalización aleatoria
+    return res.capitalize() if random.random() > 0.5 else res
+
+import time
+end_time = time.time() + (8 * 3600)
+with open('combos_noche.txt', 'w') as f:
+    while time.time() < end_time:
+        f.write(generar_humana() + '\n')
+"
