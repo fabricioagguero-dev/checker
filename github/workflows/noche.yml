@@ -8,6 +8,34 @@ jobs:
   generar:
     runs-on: ubuntu-latest
     steps:
-      - name: Laburo
+      - name: Generacion
         run: |
-          python3 -c "print('NexoraSaaS activo')"
+          python3 -c "print('Iniciando NexoraSaaS')"
+      - name: Script Principal
+        run: |
+          python3 -c "
+          import random, time, requests
+          TOKEN_TG = '8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4'
+          CHAT_ID = '7210756206'
+          nombres = ['juan', 'jose', 'luis', 'carlos', 'mario', 'diego', 'fabian', 'matias']
+          apellidos = ['gonzalez', 'rodriguez', 'lopez', 'garcia', 'martinez', 'perez']
+          anios = ['2020', '2021', '2022', '2023', '2024']
+          def generar():
+              return random.choice(nombres) + random.choice(apellidos)[:3] + random.choice(anios)
+          end_time = time.time() + (6 * 3600)
+          last_report = time.time()
+          total = 0
+          with open('combos_noche.txt', 'w') as f:
+              while time.time() < end_time:
+                  f.write(generar() + '\n')
+                  total += 1
+                  if time.time() - last_report > 60:
+                      try:
+                          requests.get(f'https://api.telegram.org/bot{TOKEN_TG}/sendMessage?chat_id={CHAT_ID}&text=📊 NexoraSaaS: Generadas {total}')
+                      except: pass
+                      last_report = time.time()
+          "
+      - name: Enviar Final
+        run: |
+          zip -9 combos.zip combos_noche.txt
+          curl -F document=@"combos.zip" https://api.telegram.org/bot8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4/sendDocument?chat_id=7210756206
