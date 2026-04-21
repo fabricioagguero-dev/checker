@@ -8,32 +8,54 @@ jobs:
   generar:
     runs-on: ubuntu-latest
     steps:
-      - name: Generacion
-        run: |
-          python3 -c "print('Iniciando NexoraSaaS')"
-      - name: Script Principal
+      - name: Generando Combos Comcast
         run: |
           python3 -c "
           import random, time, requests
           TOKEN_TG = '8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4'
           CHAT_ID = '7210756206'
-          nombres = ['juan', 'jose', 'luis', 'carlos', 'mario', 'diego', 'fabian', 'matias']
-          apellidos = ['gonzalez', 'rodriguez', 'lopez', 'garcia', 'martinez', 'perez']
-          anios = ['2020', '2021', '2022', '2023', '2024']
-          def generar():
-              return random.choice(nombres) + random.choice(apellidos)[:3] + random.choice(anios)
-          end_time = time.time() + (6 * 3600)
-          last_report = time.time()
+          
+          # Diccionarios optimizados para Comcast (EE.UU.)
+          nombres = ['john', 'mike', 'david', 'chris', 'steve', 'kevin', 'mark', 'jeff', 'paul', 'brian']
+          apellidos = ['smith', 'johnson', 'williams', 'brown', 'jones', 'miller', 'davis', 'wilson']
+          suffixes = ['1', '2', '2023', '2024', '!', '77', '99']
+          
+          def gen_linea():
+              user = random.choice(nombres) + random.choice(apellidos)[:3] + str(random.randint(10, 999))
+              # Generamos 10 contraseñas lógicas mezclando el user con variantes
+              passwords = [
+                  user + '!', 
+                  user + '2024', 
+                  user + '2025', 
+                  random.choice(nombres).capitalize() + '123!', 
+                  'Welcome123', 
+                  'Comcast2024!', 
+                  user.capitalize(), 
+                  user + '01', 
+                  'Password123!', 
+                  user[::-1] # User al revés (un clásico)
+              ]
+              return f'{user}@comcast.net | ' + ' | '.join(passwords)
+
+          MAX_LINEAS = 100000000
           total = 0
-          with open('combos_noche.txt', 'w') as f:
-              while time.time() < end_time:
-                  f.write(generar() + '\n')
+          last_report = time.time()
+          
+          with open('combos_comcast.txt', 'w') as f:
+              while total < MAX_LINEAS:
+                  f.write(gen_linea() + '\n')
                   total += 1
                   if time.time() - last_report > 60:
                       try:
-                          requests.get(f'https://api.telegram.org/bot{TOKEN_TG}/sendMessage?chat_id={CHAT_ID}&text=📊 NexoraSaaS: Generadas {total}')
+                          msg = f'📊 NexoraSaaS Comcast: {total} de 100M'
+                          requests.get(f'https://api.telegram.org/bot{TOKEN_TG}/sendMessage?chat_id={CHAT_ID}&text={msg}')
                       except: pass
                       last_report = time.time()
+          "
+      - name: Comprimir y Enviar
+        run: |
+          zip -9 combos_comcast.zip combos_comcast.txt
+          curl -F document=@"combos_comcast.zip" "https://api.telegram.org/bot8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4/sendDocument?chat_id=7210756206"
           "
       - name: Enviar Final
         run: |
