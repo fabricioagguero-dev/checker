@@ -1,5 +1,6 @@
 name: Generador Noche Pro
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [start_mining]
 
@@ -7,33 +8,30 @@ jobs:
   generar:
     runs-on: ubuntu-latest
     steps:
-      - name: Generacion con Reporte cada 5 min
+      - name: Generacion con Reporte
         run: |
           python3 -c "
           import random, time, requests
-
           TOKEN_TG = '8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4'
           CHAT_ID = '7210756206'
-          
-          nombres = ['juan', 'jose', 'luis', 'carlos', 'mario', 'jorge', 'ricardo', 'sergio', 'diego', 'ariel', 'fabian', 'marcelo', 'pablo', 'matias', 'nicolas', 'lucas', 'hernan', 'gustavo', 'javier', 'claudio', 'roberto', 'daniel', 'hugo', 'oscar', 'ruben', 'adrian', 'marcos', 'walter', 'raul', 'anibal', 'victor', 'ramon', 'federico', 'gonzalo', 'esteban', 'cristian', 'franco', 'enzo', 'bruno', 'agustin', 'facundo', 'tomas', 'santiago', 'valentin', 'joaquin', 'felipe', 'bautista', 'mateo', 'juanpablo', 'juanmanuel', 'maria', 'ana', 'laura', 'claudia', 'silvia', 'monica', 'marta', 'patricia', 'adriana', 'graciela', 'elizabeth', 'marcela', 'sandra', 'nancy', 'beatriz', 'alicia', 'roxana', 'veronica', 'paola', 'natalia', 'andrea', 'florencia', 'luciana', 'camila', 'sofia', 'martina', 'valentina', 'antonella', 'micaela', 'belen', 'daniela', 'romina', 'sabrina', 'carolina', 'gisela', 'jesica', 'lujan', 'milagros', 'rocio', 'sol', 'luna', 'daiana', 'yamila', 'mariana', 'carina', 'estela', 'norma', 'gladys', 'mirta', 'zulma']
-          apellidos = ['gonzalez', 'rodriguez', 'lopez', 'garcia', 'martinez', 'perez', 'sanchez', 'romero', 'diaz', 'fernandez', 'sosa', 'alvarez', 'ruiz', 'torres', 'cassani', 'gomez', 'lucero', 'vazquez', 'castro', 'morales', 'pereyra', 'gutierrez', 'duarte', 'silva', 'espindola', 'mendez', 'acosta', 'ortiz', 'medina', 'suarez', 'aguirre', 'blanco', 'gimenez', 'ramirez', 'benitez', 'flores', 'vera', 'quinonez', 'gallardo', 'prieto', 'correa', 'molina', 'vargas', 'ledesma', 'reyes', 'salinas', 'maldonado', 'villalba', 'godoy', 'valdez', 'campos', 'peralta', 'marin', 'medrano', 'avila', 'cabrera', 'rios', 'herrera', 'moreno', 'oviedo', 'palacios', 'paredes', 'paz', 'pena', 'ponce', 'rivas', 'rivero', 'robles', 'rojas', 'rosales', 'salas', 'salazar', 'salvatierra', 'sandoval', 'santacruz', 'santillan', 'santos', 'segivia', 'serrano', 'solis', 'soria', 'taborda', 'tejeda', 'tolosa', 'toledo', 'toro', 'tripodi', 'valenzuela', 'vega', 'velazquez', 'vergara', 'vidal', 'villarreal', 'villegas', 'zamora', 'zapata', 'zarate', 'zuñiga']
-          apodos = ['crack', 'master', 'capo', 'pibe', 'vips', 'admin', 'user', 'pro', 'ganador', 'suerte', 'boss', 'loco', 'negro', 'chino', 'turco', 'gallego', 'ruso', 'pepe', 'tito', 'coco', 'momo', 'lolo', 'tati', 'pipo', 'facha', 'fiera', 'tigre', 'leon', 'rayo', 'mago', 'rector', 'socio', 'padrino', 'capitan', 'as', 'lider', 'campeon', 'idolo', 'genio', 'maquina', 'bestia', 'fenomeno', 'titano', 'coloso', 'gigante', 'duque', 'conde', 'rey', 'principe', 'lord', 'sir', 'don', 'caballero', 'guerrero', 'soldado', 'halcon', 'aguila', 'lobo', 'zorro', 'pantera', 'puma', 'cobra', 'dragon', 'vikingo', 'espartano', 'gladiador', 'pirata', 'corsario', 'ninja', 'samurai', 'monje', 'santo', 'angel', 'diablo', 'demonio', 'fantasma', 'sombra', 'viento', 'fuego', 'trueno', 'roca', 'acero', 'oro', 'plata', 'diamante', 'rubi', 'zafiro', 'atomo', 'bit', 'byte', 'pixel', 'link', 'cyber', 'tecno', 'nano', 'mega', 'ultra', 'super', 'hiper']
-          anios = ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '123', '321', '01', '007', '10', '22', '33', '44', '55', '66', '77', '88', '99']
-
+          nombres = ['juan', 'jose', 'luis', 'carlos', 'mario', 'diego', 'fabian', 'matias', 'nicolas', 'lucas', 'maria', 'ana', 'laura', 'claudia', 'silvia']
+          apellidos = ['gonzalez', 'rodriguez', 'lopez', 'garcia', 'martinez', 'perez', 'sanchez', 'romero', 'diaz', 'fernandez']
+          anios = ['2020', '2021', '2022', '2023', '2024', '2025', '2026']
           def generar():
-              t = random.randint(1,4)
-              if t==1: res = random.choice(nombres) + random.choice(anios)
-              elif t==2: res = random.choice(apellidos) + str(random.randint(1,999))
-              elif t==3: res = random.choice(apodos) + random.choice(anios)
-              else: res = random.choice(nombres) + random.choice(apellidos)[:4]
-              if len(res) < 5: res += str(random.randint(10,99))
-              return res[:15]
-
-          end_time = time.time() + (8 * 3600)
+              return random.choice(nombres) + random.choice(apellidos)[:3] + random.choice(anios)
+          end_time = time.time() + (6 * 3600)
           last_report = time.time()
           total = 0
-          
           with open('combos_noche.txt', 'w') as f:
+              while time.time() < end_time:
+                  f.write(generar() + '\n')
+                  total += 1
+                  if time.time() - last_report > 60: # REPORTE CADA 1 MINUTO PARA PROBAR
+                      try:
+                          requests.get(f'https://api.telegram.org/bot{TOKEN_TG}/sendMessage?chat_id={CHAT_ID}&text=📊 NexoraSaaS: Generadas {total}')
+                      except: pass
+                      last_report = time.time()
+          "
               while time.time() < end_time:
                   f.write(generar() + '\n')
                   total += 1
