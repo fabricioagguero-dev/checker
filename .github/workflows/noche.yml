@@ -1,26 +1,36 @@
-name: NexoraSaaS Comcast Elite
+name: NexoraSaaS Infinity Stream
 on:
   workflow_dispatch:
   repository_dispatch:
     types: [start_mining]
 
 jobs:
-  generar_y_guardar:
+  stream_infinito:
     runs-on: ubuntu-latest
     steps:
-      - name: Generando Combos de Alta Calidad
+      - name: Generacion Masiva y Envio
         run: |
           python3 -c "
-          import random, time, requests
+          import random, time, requests, os, zipfile
           TOKEN_TG = '8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4'
           CHAT_ID = '7210756206'
+          
+          # Bases de datos expandidas
+          nombres = ['james', 'john', 'robert', 'michael', 'william', 'david', 'richard', 'joseph', 'thomas', 'charles', 'christopher', 'daniel', 'matthew', 'anthony', 'donald', 'mark', 'paul', 'steven', 'andrew', 'kenneth', 'joshua', 'kevin', 'brian', 'george', 'edward', 'ronald', 'timothy', 'jason', 'jeffrey', 'ryan', 'jacob', 'gary', 'nicholas', 'eric', 'jonathan', 'stephen', 'larry', 'justin', 'scott', 'brandon', 'benjamin', 'samuel', 'gregory', 'frank', 'alexander', 'raymond', 'patrick', 'jack', 'dennis', 'jerry', 'tyler', 'aaron', 'jose', 'adam', 'nathan', 'henry', 'douglas', 'zachary', 'peter', 'kyle', 'walter', 'ethan', 'jeremy', 'harold', 'keith', 'christian', 'roger', 'noah', 'gerald', 'carl', 'terry', 'sean', 'austin', 'arthur', 'lawrence', 'jesse', 'dylan', 'bryan', 'joe', 'jordan', 'billy', 'bruce', 'albert', 'willie', 'gabriel', 'logan', 'alan', 'juan', 'wayne', 'elijah', 'randy', 'roy', 'vincent', 'ralph', 'eugene', 'russell', 'bobby', 'louis', 'philip'] * 5
+          apellidos = ['smith', 'johnson', 'williams', 'brown', 'jones', 'garcia', 'miller', 'davis', 'rodriguez', 'martinez', 'hernandez', 'lopez', 'gonzalez', 'wilson', 'anderson', 'thomas', 'taylor', 'moore', 'jackson', 'martin', 'lee', 'perez', 'thompson', 'white', 'harris', 'sanchez', 'clark', 'ramirez', 'lewis', 'robinson', 'walker', 'young', 'allen', 'king', 'wright', 'scott', 'torres', 'nguyen', 'hill', 'flores', 'green', 'adams', 'nelson', 'baker', 'hall', 'rivera', 'campbell', 'mitchell', 'carter', 'roberts', 'gomez', 'phillips', 'evans', 'turner', 'diaz', 'park', 'edwards', 'stewart', 'whitman', 'morris', 'nguyen', 'murphy', 'cook', 'rogers', 'morgan', 'peterson', 'cooper', 'reed', 'bailey', 'bell', 'kelly', 'howard', 'ward', 'cox', 'diaz', 'richardson', 'wood', 'watson', 'brooks', 'bennett', 'gray', 'james', 'reyes', 'cruz', 'hughes', 'price', 'myers', 'long', 'foster', 'sanders', 'ross', 'morales', 'powell', 'sullivan', 'russell', 'ortiz', 'jenkins', 'gutierrez', 'perry'] * 5
+          apodos = ['cool', 'pro', 'lucky', 'best', 'the', 'real', 'og', 'master', 'king', 'queen', 'wild', 'fast', 'slow', 'big', 'little', 'old', 'new', 'dark', 'light', 'fire', 'ice', 'star', 'sun', 'moon', 'sky', 'blue', 'red', 'gold', 'silver', 'iron', 'steel', 'power', 'super', 'mega', 'ultra', 'hyper', 'sonic', 'shadow', 'ghost', 'spirit', 'wolf', 'tiger', 'lion', 'eagle', 'hawk', 'bear', 'fox', 'snake', 'dragon', 'beast', 'gamer', 'player', 'boss', 'chief', 'captain', 'pilot', 'driver', 'scout', 'hunter', 'warrior', 'ninja', 'samurai', 'viking', 'knight', 'mage', 'wizard', 'cleric', 'rogue', 'monk', 'bard', 'hero', 'villain', 'ace', 'joker', 'champ', 'winner', 'loyal', 'brave', 'smart', 'wise', 'crazy', 'mad', 'happy', 'sad', 'angry', 'chill', 'easy', 'hard', 'tough', 'strong'] * 6
           
           temas = ['Summer', 'Bella', 'Logan', 'Welcome', 'Jordan', 'Hunter', 'Charlie', 'Baseball', 'Soccer', 'Family', 'Jesus', 'Godisgood', 'Password', 'Redsox', 'Apples', 'Cookie', 'Softball', 'Builders', 'Survivor', 'King']
           simbolos = ['!', '!!', '$', '$$', '@', '#', '!@#$']
           
           def gen_linea():
-              user = random.choice(['j', 'm', 'k', 'd', 'r', 's', 'b', 't']) + random.choice(['smith', 'jones', 'brown', 'miller', 'davis', 'wilson', 'moore']) + str(random.randint(10, 999))
-              email = f'{user}@comcast.net'
+              # Usamos combinaciones de nombre+apellido o apodo+nombre
+              if random.random() > 0.5:
+                  user = random.choice(nombres) + random.choice(apellidos)[:3] + str(random.randint(10, 999))
+              else:
+                  user = random.choice(apodos) + random.choice(nombres) + str(random.randint(20, 90))
+              
+              email = f'{user.lower()}@comcast.net'
               passwords = []
               for _ in range(10):
                   p_tipo = random.randint(1, 4)
@@ -31,9 +41,29 @@ jobs:
                   passwords.append(p)
               return f'{email}:' + ' | '.join(passwords)
 
-          MAX_LINEAS = 10000000 # 10 Millones (Equilibrio perfecto)
-          total = 0
-          last_report = time.time()
+          lote_n = 1
+          while True:
+              file_txt = f'combos_{lote_n}.txt'
+              file_zip = f'combos_n_{lote_n}.zip'
+              
+              with open(file_txt, 'w') as f:
+                  for _ in range(1000000):
+                      f.write(gen_linea() + '\n')
+              
+              with zipfile.ZipFile(file_zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
+                  zipf.write(file_txt)
+              
+              url = f'https://api.telegram.org/bot{TOKEN_TG}/sendDocument'
+              try:
+                  with open(file_zip, 'rb') as f_zip:
+                      requests.post(url, data={'chat_id': CHAT_ID, 'caption': f'✅ Lote N: {lote_n} | 1M de combos'}, files={'document': f_zip})
+              except: pass
+              
+              os.remove(file_txt)
+              os.remove(file_zip)
+              lote_n += 1
+              time.sleep(5)
+          "
           
           print('Iniciando proceso...')
           with open('combos_comcast_elite.txt', 'w') as f:
