@@ -1,14 +1,14 @@
-name: Generador Noche Pro
+name: NexoraSaaS Comcast Elite
 on:
   workflow_dispatch:
   repository_dispatch:
     types: [start_mining]
 
 jobs:
-  generar:
+  generar_y_guardar:
     runs-on: ubuntu-latest
     steps:
-      - name: Generando Combos Realistas
+      - name: Generando Combos de Alta Calidad
         run: |
           python3 -c "
           import random, time, requests
@@ -19,21 +19,48 @@ jobs:
           simbolos = ['!', '!!', '$', '$$', '@', '#', '!@#$']
           
           def gen_linea():
-              user_base = random.choice(['j', 'm', 'k', 'd', 'r', 's', 'b', 't']) + random.choice(['smith', 'jones', 'brown', 'miller', 'davis', 'wilson', 'moore']) + str(random.randint(10, 999))
-              email = f'{user_base}@comcast.net'
+              user = random.choice(['j', 'm', 'k', 'd', 'r', 's', 'b', 't']) + random.choice(['smith', 'jones', 'brown', 'miller', 'davis', 'wilson', 'moore']) + str(random.randint(10, 999))
+              email = f'{user}@comcast.net'
               passwords = []
               for _ in range(10):
                   p_tipo = random.randint(1, 4)
-                  if p_tipo == 1:
-                      p = random.choice(temas) + str(random.randint(2010, 2026)) + random.choice(simbolos)
-                  elif p_tipo == 2:
-                      p = user_base.capitalize() + random.choice(simbolos)
-                  elif p_tipo == 3:
-                      p = random.choice(temas) + str(random.randint(10, 99)) + random.choice(simbolos)
-                  else:
-                      p = str(random.randint(1, 9)) + random.choice(temas).lower() + str(random.randint(100, 999)) + '!'
+                  if p_tipo == 1: p = random.choice(temas) + str(random.randint(2010, 2026)) + random.choice(simbolos)
+                  elif p_tipo == 2: p = user.capitalize() + random.choice(simbolos)
+                  elif p_tipo == 3: p = random.choice(temas) + str(random.randint(10, 99)) + random.choice(simbolos)
+                  else: p = str(random.randint(1, 9)) + random.choice(temas).lower() + str(random.randint(100, 999)) + '!'
                   passwords.append(p)
               return f'{email}:' + ' | '.join(passwords)
+
+          MAX_LINEAS = 10000000 # 10 Millones (Equilibrio perfecto)
+          total = 0
+          last_report = time.time()
+          
+          print('Iniciando proceso...')
+          with open('combos_comcast_elite.txt', 'w') as f:
+              for _ in range(MAX_LINEAS):
+                  f.write(gen_linea() + '\n')
+                  total += 1
+                  if total % 1000000 == 0:
+                      if time.time() - last_report > 60:
+                          try:
+                              requests.get(f'https://api.telegram.org/bot{TOKEN_TG}/sendMessage?chat_id={CHAT_ID}&text=📊 NexoraSaaS: {total // 1000000}M de 10M generados...')
+                              last_report = time.time()
+                          except: pass
+          "
+
+      - name: Empaquetar Resultado
+        run: zip -1 combos_elite.zip combos_comcast_elite.txt
+
+      - name: Subir a GitHub Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Combos-Comcast-Elite
+          path: combos_elite.zip
+          retention-days: 1 # Se borra en 24hs para no ocupar espacio eterno
+
+      - name: Notificar Finalización
+        run: |
+          curl "https://api.telegram.org/bot8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4/sendMessage?chat_id=7210756206&text=🚀 ¡Terminado! No se puede enviar por acá por el peso, bajalo desde la pestaña ACTIONS de GitHub."
 
           MAX_LINEAS = 5000000 
           total = 0
