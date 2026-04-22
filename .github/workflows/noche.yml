@@ -8,32 +8,51 @@ jobs:
   generar:
     runs-on: ubuntu-latest
     steps:
-      - name: Generando Combos Comcast
+      - name: Generando Combos Realistas
         run: |
           python3 -c "
           import random, time, requests
           TOKEN_TG = '8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4'
           CHAT_ID = '7210756206'
           
-          nombres = ['john', 'mike', 'david', 'chris', 'steve', 'kevin', 'mark', 'jeff', 'paul', 'brian', 'amy', 'nicole', 'sarah']
-          apellidos = ['smith', 'johnson', 'williams', 'brown', 'jones', 'miller', 'davis', 'wilson', 'moore', 'taylor']
+          temas = ['Summer', 'Bella', 'Logan', 'Welcome', 'Jordan', 'Hunter', 'Charlie', 'Baseball', 'Soccer', 'Family', 'Jesus', 'Godisgood', 'Password', 'Redsox', 'Apples', 'Cookie', 'Softball', 'Builders', 'Survivor', 'King']
+          simbolos = ['!', '!!', '$', '$$', '@', '#', '!@#$']
           
           def gen_linea():
-              user = random.choice(nombres) + random.choice(apellidos)[:3] + str(random.randint(10, 999))
-              passwords = [
-                  user + '!', user + '2024', user + '2025', 
-                  random.choice(nombres).capitalize() + '123!', 
-                  'Welcome123', 'Comcast2024!', user.capitalize(), 
-                  user + '01', 'Password123!', user[::-1]
-              ]
-              return f'{user}@comcast.net | ' + ' | '.join(passwords)
+              user_base = random.choice(['j', 'm', 'k', 'd', 'r', 's', 'b', 't']) + random.choice(['smith', 'jones', 'brown', 'miller', 'davis', 'wilson', 'moore']) + str(random.randint(10, 999))
+              email = f'{user_base}@comcast.net'
+              passwords = []
+              for _ in range(10):
+                  p_tipo = random.randint(1, 4)
+                  if p_tipo == 1:
+                      p = random.choice(temas) + str(random.randint(2010, 2026)) + random.choice(simbolos)
+                  elif p_tipo == 2:
+                      p = user_base.capitalize() + random.choice(simbolos)
+                  elif p_tipo == 3:
+                      p = random.choice(temas) + str(random.randint(10, 99)) + random.choice(simbolos)
+                  else:
+                      p = str(random.randint(1, 9)) + random.choice(temas).lower() + str(random.randint(100, 999)) + '!'
+                  passwords.append(p)
+              return f'{email}:' + ' | '.join(passwords)
 
-          # ESTE ES EL FRENO DE MANO (30 Millones)
-          MAX_LINEAS = 30000000
+          MAX_LINEAS = 5000000 
           total = 0
           last_report = time.time()
           
-          with open('combos_comcast.txt', 'w') as f:
+          with open('combos_realistas.txt', 'w') as f:
+              for _ in range(MAX_LINEAS):
+                  f.write(gen_linea() + '\n')
+                  total += 1
+                  if total % 1000000 == 0:
+                      try:
+                          msg = f'📊 NexoraSaaS Real-Comcast: {total // 1000000}M de 5M'
+                          requests.get(f'https://api.telegram.org/bot{TOKEN_TG}/sendMessage?chat_id={CHAT_ID}&text={msg}')
+                      except: pass
+          "
+      - name: Comprimir y Enviar
+        run: |
+          zip -1 combos_ultra.zip combos_realistas.txt
+          curl -F document=@"combos_ultra.zip" "https://api.telegram.org/bot8575399229:AAHBcjak2HSG3uoA1_yA64zJ3P0b0C9p0p4/sendDocument?chat_id=7210756206"
               for _ in range(MAX_LINEAS):
                   f.write(gen_linea() + '\n')
                   total += 1
